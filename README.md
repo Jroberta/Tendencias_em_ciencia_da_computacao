@@ -1,1 +1,1 @@
-# engenharia-de-prompt-fundamentos.
+[PlanodeAulas_Tendencias_EngPrompt_IA_Professora Kadidja_2026_2_5f.pdf](https://github.com/user-attachments/files/31533979/PlanodeAulas_Tendencias_EngPrompt_IA_Professora.Kadidja_2026_2_5f.pdf)
