@@ -1,4 +1,4 @@
-# Tendências em Ciências da Computação
+# Tendências em Ciência da Computação
 
 Resumo
 -------
@@ -69,22 +69,3 @@ Como usar / adaptar o plano
 3. Adapte cronograma e tópicos conforme duração do curso.
 4. Substitua exemplos de datasets/serviços por alternativas locais ou gratuitas, conforme necessidade.
 
-Contribuições
--------------
-Contribuições são bem-vindas:
-- Abra issues para sugerir tópicos ou melhorias.
-- Envie pull requests com materiais (slides, notebooks, correções).
-- Use o padrão de pastas sugerido e inclua metadados (autor, data, licença).
-
-Licença
--------
-Escolha uma licença apropriada (recomenda-se MIT ou CC-BY-SA para materiais educacionais). Se desejar, posso adicionar um template de licença ao repositório.
-
-Contato
--------
-Autor / Maintainer: [Seu Nome] — (adicione e-mail ou link GitHub)
-Se preferir, coloque aqui informações de contato da coordenação do curso.
-
-Notas finais
-------------
-Este README é um modelo inicial. Posso personalizá-lo para refletir os objetivos exatos do seu plano de aulas (incluir listas de tópicos por semana, rubricas específicas, datasets e links), ou faço o commit direto no repositório se você autorizar.
