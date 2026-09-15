@@ -1,481 +1,245 @@
-Projeto calculadora simples: 
-"""
-Interface principal da calculadora
-"""
-
-from calculadora import Calculadora
-
-def exibir_menu():
-    """Exibe o menu de operações"""
-    print("\n" + "="*40)
-    print("      CALCULADORA MODULAR")
-    print("="*40)
-    print("Operações disponíveis:")
-    print("  +    : Soma")
-    print("  -    : Subtração")
-    print("  *    : Multiplicação")
-    print("  /    : Divisão")
-    print("  **   : Potência")
-    print("  sqrt : Raiz Quadrada")
-    print("  h    : Ver histórico")
-    print("  l    : Limpar histórico")
-    print("  s    : Sair")
-    print("="*40)
-
-
-def main():
-    """Função principal do programa"""
-    calculadora = Calculadora()
-    
-    while True:
-        exibir_menu()
-        operacao = input("\nEscolha uma operação: ").strip()
-        
-        if operacao.lower() == 's':
-            print("\nAté logo!")
-            break
-        
-        elif operacao.lower() == 'h':
-            if calculadora.historico:
-                print("\nHistórico de operações:")
-                for i, operacao_realizada in enumerate(calculadora.historico, 1):
-                    print(f"  {i}. {operacao_realizada}")
-            else:
-                print("\nHistórico vazio!")
-        
-        elif operacao.lower() == 'l':
-            calculadora.limpar_historico()
-            print("\nHistórico limpo!")
-        
-        elif operacao.lower() == 'sqrt':
-            try:
-                num = input("Digite o número: ")
-                resultado = calculadora.calcular(num, 'sqrt')
-                print(f"\nResultado: {resultado}")
-            except ValueError as e:
-                print(f"\n{e}")
-        
-        elif operacao in ['+', '-', '*', '/', '**']:
-            try:
-                num1 = input("Digite o primeiro número: ")
-                num2 = input("Digite o segundo número: ")
-                resultado = calculadora.calcular(num1, operacao, num2)
-                print(f"\nResultado: {resultado}")
-            except ValueError as e:
-                print(f"\n{e}")
-        
-        else:
-            print("\nOperação inválida! Tente novamente.")
-
-
-if __name__ == "__main__":
-    main()
-
-"""
-Testes unitários para a calculadora
-"""
-
-import unittest
-from operacoes import somar, subtrair, multiplicar, dividir, potencia, raiz_quadrada
-from calculadora import Calculadora
-
-
-class TestOperacoes(unittest.TestCase):
-    """Testa as operações matemáticas"""
-    
-    def test_somar(self):
-        self.assertEqual(somar(5, 3), 8)
-        self.assertEqual(somar(-5, 3), -2)
-    
-    def test_subtrair(self):
-        self.assertEqual(subtrair(5, 3), 2)
-        self.assertEqual(subtrair(3, 5), -2)
-    
-    def test_multiplicar(self):
-        self.assertEqual(multiplicar(5, 3), 15)
-        self.assertEqual(multiplicar(-5, 3), -15)
-    
-    def test_dividir(self):
-        self.assertEqual(dividir(10, 2), 5)
-        self.assertAlmostEqual(dividir(10, 3), 3.333, places=2)
-        with self.assertRaises(ValueError):
-            dividir(10, 0)
-    
-    def test_potencia(self):
-        self.assertEqual(potencia(2, 3), 8)
-        self.assertEqual(potencia(5, 0), 1)
-    
-    def test_raiz_quadrada(self):
-        self.assertEqual(raiz_quadrada(16), 4)
-        self.assertEqual(raiz_quadrada(0), 0)
-        with self.assertRaises(ValueError):
-            raiz_quadrada(-1)
-
-
-class TestCalculadora(unittest.TestCase):
-    """Testa a classe Calculadora"""
-    
-    def setUp(self):
-        self.calc = Calculadora()
-    
-    def test_calcular_soma(self):
-        resultado = self.calc.calcular(10, '+', 5)
-        self.assertEqual(resultado, 15)
-    
-    def test_historico(self):
-        self.calc.calcular(10, '+', 5)
-        self.calc.calcular(20, '-', 8)
-        self.assertEqual(len(self.calc.historico), 2)
-    
-    def test_limpar_historico(self):
-        self.calc.calcular(10, '+', 5)
-        self.calc.limpar_historico()
-        self.assertEqual(len(self.calc.historico), 0)
-
-
-if __name__ == '__main__':
-    unittest.main()
-
-"""
-Módulo de operações matemáticas
-"""
-
-def somar(a, b):
-    return a + b
-
-def subtrair(a, b):
-    return a - b
-
-def multiplicar(a, b):
-    return a * b
-
-def dividir(a, b):
-    if b == 0:
-        raise ValueError("Divisão por zero!")
-    return a / b
-
-def potencia(a, b):
-    return a ** b
-
-//Refatoração
-Prompt: Atue como um dev de Python Senior e refatore o código para que seja mais simplificado, respeitando as boas práticas, e considere o nível do dev senior
-
-"""
-Operações matemáticas da calculadora.
-"""
-
-from math import sqrt
-
-
-def somar(a: float, b: float) -> float:
-    return a + b
-
-
-def subtrair(a: float, b: float) -> float:
-    return a - b
-
-
-def multiplicar(a: float, b: float) -> float:
-    return a * b
-
-
-def dividir(a: float, b: float) -> float:
-    if b == 0:
-        raise ValueError("Divisão por zero não é permitida.")
-    return a / b
-
-
-def potencia(a: float, b: float) -> float:
-    return a**b
-
-
-def raiz_quadrada(a: float) -> float:
-    if a < 0:
-        raise ValueError("Não é possível calcular a raiz de um número negativo.")
-    return sqrt(a)
-
-"""
-Classe principal da calculadora.
-"""
-
-from collections.abc import Callable
-
-from operacoes import (
-    dividir,
-    multiplicar,
-    potencia,
-    raiz_quadrada,
-    somar,
-    subtrair,
-)
-
-
-class Calculadora:
-    """Executa operações matemáticas e mantém o histórico."""
-
-    OPERACOES: dict[str, Callable] = {
-        "+": somar,
-        "-": subtrair,
-        "*": multiplicar,
-        "/": dividir,
-        "**": potencia,
-        "sqrt": raiz_quadrada,
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyMzdNS5g5CNaO68EmtgLFbU",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
     }
-
-    def __init__(self) -> None:
-        self.historico: list[str] = []
-
-    def calcular(
-        self,
-        num1: float | str,
-        operacao: str,
-        num2: float | str | None = None,
-    ) -> float:
-        """Executa uma operação e registra o resultado no histórico."""
-        operacao = operacao.lower().strip()
-
-        try:
-            funcao = self.OPERACOES[operacao]
-        except KeyError:
-            raise ValueError(f"Operação inválida: {operacao}") from None
-
-        primeiro = float(num1)
-
-        if operacao == "sqrt":
-            resultado = funcao(primeiro)
-            expressao = f"sqrt({primeiro:g}) = {resultado:g}"
-        else:
-            if num2 is None:
-                raise ValueError("A operação requer dois números.")
-
-            segundo = float(num2)
-            resultado = funcao(primeiro, segundo)
-            expressao = f"{primeiro:g} {operacao} {segundo:g} = {resultado:g}"
-
-        self.historico.append(expressao)
-        return resultado
-
-    def limpar_historico(self) -> None:
-        """Remove todas as operações do histórico."""
-        self.historico.clear()
-"""
-Interface principal da calculadora.
-"""
-
-from calculadora import Calculadora
-
-
-OPERACOES_BINARIAS = {"+", "-", "*", "/", "**"}
-
-
-def exibir_menu() -> None:
-    """Exibe o menu principal."""
-    print(
-        """
-========================================
-          CALCULADORA MODULAR
-========================================
-Operações disponíveis:
-
-  +    : Soma
-  -    : Subtração
-  *    : Multiplicação
-  /    : Divisão
-  **   : Potência
-  sqrt : Raiz Quadrada
-  h    : Ver histórico
-  l    : Limpar histórico
-  s    : Sair
-========================================
-"""
-    )
-
-
-def exibir_historico(calculadora: Calculadora) -> None:
-    """Exibe o histórico de operações."""
-    if not calculadora.historico:
-        print("\nHistórico vazio!")
-        return
-
-    print("\nHistórico de operações:")
-
-    for indice, operacao in enumerate(calculadora.historico, start=1):
-        print(f"  {indice}. {operacao}")
-
-
-def executar_calculo(
-    calculadora: Calculadora,
-    operacao: str,
-) -> None:
-    """Solicita os números e executa a operação."""
-    try:
-        primeiro_numero = input("Digite o primeiro número: ")
-
-        if operacao == "sqrt":
-            resultado = calculadora.calcular(primeiro_numero, operacao)
-        else:
-            segundo_numero = input("Digite o segundo número: ")
-            resultado = calculadora.calcular(
-                primeiro_numero,
-                operacao,
-                segundo_numero,
-            )
-
-        print(f"\nResultado: {resultado:g}")
-
-    except ValueError as erro:
-        print(f"\nErro: {erro}")
-
-
-def processar_comando(
-    calculadora: Calculadora,
-    comando: str,
-) -> bool:
-    """
-    Processa um comando.
-
-    Retorna False quando o programa deve ser encerrado.
-    """
-    if comando == "s":
-        print("\nAté logo!")
-        return False
-
-    if comando == "h":
-        exibir_historico(calculadora)
-        return True
-
-    if comando == "l":
-        calculadora.limpar_historico()
-        print("\nHistórico limpo!")
-        return True
-
-    if comando in calculadora.OPERACOES:
-        executar_calculo(calculadora, comando)
-        return True
-
-    print("\nOperação inválida! Tente novamente.")
-    return True
-
-
-def main() -> None:
-    """Executa a aplicação."""
-    calculadora = Calculadora()
-
-    while True:
-        exibir_menu()
-        comando = input("\nEscolha uma operação: ").strip().lower()
-
-        if not processar_comando(calculadora, comando):
-            break
-
-
-if __name__ == "__main__":
-    main()
-"""
-Testes unitários da calculadora.
-"""
-
-import unittest
-
-from calculadora import Calculadora
-from operacoes import (
-    dividir,
-    multiplicar,
-    potencia,
-    raiz_quadrada,
-    somar,
-    subtrair,
-)
-
-
-class TestOperacoes(unittest.TestCase):
-    """Testa as operações matemáticas."""
-
-    def test_somar(self):
-        casos = [
-            (5, 3, 8),
-            (-5, 3, -2),
-        ]
-
-        for a, b, esperado in casos:
-            with self.subTest(a=a, b=b):
-                self.assertEqual(somar(a, b), esperado)
-
-    def test_subtrair(self):
-        casos = [
-            (5, 3, 2),
-            (3, 5, -2),
-        ]
-
-        for a, b, esperado in casos:
-            with self.subTest(a=a, b=b):
-                self.assertEqual(subtrair(a, b), esperado)
-
-    def test_multiplicar(self):
-        casos = [
-            (5, 3, 15),
-            (-5, 3, -15),
-        ]
-
-        for a, b, esperado in casos:
-            with self.subTest(a=a, b=b):
-                self.assertEqual(multiplicar(a, b), esperado)
-
-    def test_dividir(self):
-        self.assertEqual(dividir(10, 2), 5)
-        self.assertAlmostEqual(dividir(10, 3), 3.333, places=2)
-
-        with self.assertRaisesRegex(ValueError, "Divisão por zero"):
-            dividir(10, 0)
-
-    def test_potencia(self):
-        self.assertEqual(potencia(2, 3), 8)
-        self.assertEqual(potencia(5, 0), 1)
-
-    def test_raiz_quadrada(self):
-        self.assertEqual(raiz_quadrada(16), 4)
-        self.assertEqual(raiz_quadrada(0), 0)
-
-        with self.assertRaisesRegex(ValueError, "número negativo"):
-            raiz_quadrada(-1)
-
-
-class TestCalculadora(unittest.TestCase):
-    """Testa a classe Calculadora."""
-
-    def setUp(self):
-        self.calculadora = Calculadora()
-
-    def test_calcular_soma(self):
-        resultado = self.calculadora.calcular(10, "+", 5)
-
-        self.assertEqual(resultado, 15)
-
-    def test_calcular_raiz_quadrada(self):
-        resultado = self.calculadora.calcular(16, "sqrt")
-
-        self.assertEqual(resultado, 4)
-
-    def test_historico(self):
-        self.calculadora.calcular(10, "+", 5)
-        self.calculadora.calcular(20, "-", 8)
-
-        self.assertEqual(len(self.calculadora.historico), 2)
-
-    def test_limpar_historico(self):
-        self.calculadora.calcular(10, "+", 5)
-
-        self.calculadora.limpar_historico()
-
-        self.assertEqual(self.calculadora.historico, [])
-
-    def test_operacao_invalida(self):
-        with self.assertRaisesRegex(ValueError, "Operação inválida"):
-            self.calculadora.calcular(10, "%", 5)
-
-
-if __name__ == "__main__":
-    unittest.main()
-
-Conclusão: Foram eliminadas as repetições, criou uma nova cadeia sem usar if\elif repetidamente.
-Debbug: O código dos testes importa raiz_quadrada, mas o módulo operacoes apresentado não a implementa.
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/Jroberta/Tendencias_em_ciencia_da_computacao/blob/main/Unidade%202\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "d710ad6d"
+      },
+      "source": [
+        "## Simple Calculator Project (Primeira Versão)"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "c023cdf1"
+      },
+      "source": [
+        "#Prompt:Faça um projeto de calculadora simples em python\n",
+        "\n",
+        "def add(x, y):\n",
+        "    \"\"\"Adds two numbers\"\"\"\n",
+        "    return x + y\n",
+        "\n",
+        "def subtract(x, y):\n",
+        "    \"\"\"Subtracts two numbers\"\"\"\n",
+        "    return x - y\n",
+        "\n",
+        "def multiply(x, y):\n",
+        "    \"\"\"Multiplies two numbers\"\"\"\n",
+        "    return x * y\n",
+        "\n",
+        "def divide(x, y):\n",
+        "    \"\"\"Divides two numbers\"\"\"\n",
+        "    if y == 0:\n",
+        "        return \"Error! Division by zero.\"\n",
+        "    return x / y\n",
+        "\n",
+        "print(\"Select operation:\")\n",
+        "print(\"1. Add\")\n",
+        "print(\"2. Subtract\")\n",
+        "print(\"3. Multiply\")\n",
+        "print(\"4. Divide\")\n",
+        "\n",
+        "while True:\n",
+        "    choice = input(\"Enter choice(1/2/3/4): \")\n",
+        "\n",
+        "    if choice in ('1', '2', '3', '4'):\n",
+        "        try:\n",
+        "            num1 = float(input(\"Enter first number: \"))\n",
+        "            num2 = float(input(\"Enter second number: \"))\n",
+        "        except ValueError:\n",
+        "            print(\"Invalid input. Please enter numbers only!\")\n",
+        "            continue\n",
+        "\n",
+        "        if choice == '1':\n",
+        "            print(f\"{num1} + {num2} = {add(num1, num2)}\")\n",
+        "\n",
+        "        elif choice == '2':\n",
+        "            print(f\"{num1} - {num2} = {subtract(num1, num2)}\")\n",
+        "\n",
+        "        elif choice == '3':\n",
+        "            print(f\"{num1} * {num2} = {multiply(num1, num2)}\")\n",
+        "\n",
+        "        elif choice == '4':\n",
+        "            result = divide(num1, num2)\n",
+        "            print(f\"{num1} / {num2} = {result}\")\n",
+        "\n",
+        "        next_calculation = input(\"Let's do next calculation? (yes/no): \")\n",
+        "        if next_calculation.lower() == \"no\":\n",
+        "            break\n",
+        "    else:\n",
+        "        print(\"Invalid Input\")\n",
+        "        -------------------------------------------------------------------------\n",
+        "#1.Qual é a entrada do programa?\n",
+        "\n",
+        "#Seleção da operação: O programa pede ao usuário para escolher uma operação (adição, subtração, multiplicação ou divisão) inserindo um número de 1 a 4.\n",
+        "#Números para cálculo: Após a seleção da operação, o programa solicita ao usuário dois números (que podem ser inteiros ou decimais) para realizar o cálculo.\n",
+        "#Decisão de continuar: No final de cada cálculo, o programa pergunta se o usuário deseja realizar outra operação (entrada 'sim' ou 'não').\n",
+        "\n",
+        "#2.Qual processamento ele realiza?\n",
+        "\n",
+        "#Obtenção de entrada: O programa lê as escolhas do usuário e os números de entrada.\n",
+        "#Validação de entrada: Ele verifica se a escolha da operação é válida (entre 1 e 4) e tenta converter os números inseridos para float, tratando erros se a entrada não for numérica.\n",
+        "#Execução da operação: Com base na escolha do usuário, o programa chama a função apropriada (add, subtract, multiply, divide) para realizar o cálculo.\n",
+        "#Tratamento de divisão por zero: Se a operação for divisão e o segundo número for zero, ele retorna uma mensagem de erro específica.\n",
+        "#Loop de execução: O programa continua a solicitar operações e números até que o usuário decida parar.\n",
+        "\n",
+        "#3.Qual é a saída?\n",
+        "\n",
+        "#Menu de operações: No início, exibe as opções de operações disponíveis.\n",
+        "#Resultado do cálculo: Após cada operação, o programa imprime o resultado do cálculo em um formato claro (ex: \"8.0 / 6.0 = 1.3333333333333333\").\n",
+        "#Mensagens de erro: Exibe mensagens de erro em caso de entrada inválida (ex: \"Invalid input. Please enter numbers only!\") ou divisão por zero (ex: \"Error! Division by zero.\").\n",
+        "#Prompt para continuar: Pergunta ao usuário se ele deseja fazer outro cálculo.\n",
+        "\n",
+        "#4. Qual parte você ainda não compreende? Consigo compreender mas não tenho autonomia para codar.\n",
+        "-------------------------------------------------------------------------------------\n",
+        "\n",
+        "\n"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Projeto de Calculadora Simples\n",
+        "# Desenvolvido por um estudante de Sistemas de Informação\n",
+        "#Prompt: Crie um projeto simples em português de calculadora como se fosse um estudante de sistemas de informação, diminua o uso de if/elif e siga as boas práticas\n",
+        "\n",
+        "# 1. Funções para as operações básicas\n",
+        "def somar(a, b):\n",
+        "    \"\"\"Retorna a soma de dois números.\"\"\"\n",
+        "    return a + b\n",
+        "\n",
+        "def subtrair(a, b):\n",
+        "    \"\"\"Retorna a diferença entre dois números.\"\"\"\n",
+        "    return a - b\n",
+        "\n",
+        "def multiplicar(a, b):\n",
+        "    \"\"\"Retorna o produto de dois números.\"\"\"\n",
+        "    return a * b\n",
+        "\n",
+        "def dividir(a, b):\n",
+        "    \"\"\"Retorna o quociente da divisão de dois números. Trata divisão por zero.\"\"\"\n",
+        "    if b == 0:\n",
+        "        return \"Erro: Não é possível dividir por zero!\"\n",
+        "    return a / b\n",
+        "\n",
+        "# 2. Mapeamento das operações para as funções correspondentes\n",
+        "# Isso reduz o uso de 'if/elif' para selecionar a operação.\n",
+        "operacoes = {\n",
+        "    '+': somar,\n",
+        "    '-': subtrair,\n",
+        "    '*': multiplicar,\n",
+        "    '/': dividir\n",
+        "}\n",
+        "\n",
+        "# 3. Função principal da calculadora\n",
+        "def calculadora():\n",
+        "    print(\"\\n--- Calculadora Python Simples ---\")\n",
+        "    print(\"Operações disponíveis:\")\n",
+        "    print(\"  + para Adição\")\n",
+        "    print(\"  - para Subtração\")\n",
+        "    print(\"  * para Multiplicação\")\n",
+        "    print(\"  / para Divisão\")\n",
+        "\n",
+        "    while True:\n",
+        "        operador = input(\"\\nEscolha uma operação (+, -, *, /) ou 'sair' para encerrar: \").lower()\n",
+        "\n",
+        "        if operador == 'sair':\n",
+        "            print(\"Calculadora encerrada. Até a próxima!\")\n",
+        "            break\n",
+        "\n",
+        "        if operador not in operacoes:\n",
+        "            print(\"Operador inválido. Por favor, escolha +, -, * ou /.\")\n",
+        "            continue\n",
+        "\n",
+        "        try:\n",
+        "            num1 = float(input(\"Digite o primeiro número: \"))\n",
+        "            num2 = float(input(\"Digite o segundo número: \"))\n",
+        "        except ValueError:\n",
+        "            print(\"Entrada inválida. Certifique-se de digitar apenas números.\")\n",
+        "            continue\n",
+        "\n",
+        "        # Executa a operação usando o dicionário\n",
+        "        resultado = operacoes[operador](num1, num2)\n",
+        "\n",
+        "        # Exibe o resultado\n",
+        "        print(f\"{num1} {operador} {num2} = {resultado}\")\n",
+        "\n",
+        "# 4. Inicia a calculadora\n",
+        "if __name__ == \"__main__\":\n",
+        "    calculadora()\n",
+        "\n",
+        "----------------------------------------------------------------------------------\n",
+        "\n",
+        "# Não foram identificados bugs.\n",
+        "# No segundo prompt foi solicitado a diminuição na quantidade de if/elif e que a calculadora fosse em português.\n",
+        "# As variáveis apresentam nomes melhores\n",
+        "# Há uma clareza e objetividade maior que a primeira versão gerada\n",
+        "\n",
+        "#Checklist de Entrega:\n",
+        "# Defini o problema.\n",
+        "# Identifiquei entrada, processamento e saída.\n",
+        "# Registrei o prompt utilizado.\n",
+        "# Registrei a primeira versão do código.\n",
+        "# Registrei os resultados.\n",
+        "# Solicitei e analisei uma refatoração.\n",
+        "# Comparei as versões.\n",
+        "# Respondi à reflexão final.\n",
+        "# Organizei o arquivo no GitHub\n",
+        "\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "JMHsHHgnSvd6",
+        "outputId": "72ed6e6e-e0ec-4222-d6e9-135fa25bb2d1"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "--- Calculadora Python Simples ---\n",
+            "Operações disponíveis:\n",
+            "  + para Adição\n",
+            "  - para Subtração\n",
+            "  * para Multiplicação\n",
+            "  / para Divisão\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
