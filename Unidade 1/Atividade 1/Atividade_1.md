@@ -1,7 +1,9 @@
 # Atividade Prática: Identificando a IA
 
 **Aluna:** Júlia Roberta de Fátima Sousa Araújo 
+
 **RGM:** 38965054
+
 **Ferramenta de IA generativa utilizada:** Chat GPT, GPT-6
 
 # Introdução
