@@ -51,13 +51,13 @@ O sistema está disponível publicamente em **[chat-bot-sus.netlify.app](https:/
 
 ### 1.2 Escopo e Limites
 
-** Incluído na entrega atual (MVP):**
+**Incluído na entrega atual (MVP):**
 * Interface web conversacional acessível via navegador (desktop e mobile).
 * Interpretação de linguagem natural para identificar nomes de medicamentos (princípio ativo ou nome comercial) e filtros de localização (região/bairro/unidade).
 * Consulta em tempo real ao banco de dados relacional contendo unidades de saúde, catálogo de medicamentos e saldo em estoque.
 * Retorno estruturado com status de disponibilidade, quantidade, endereço da unidade e orientações básicas de retirada.
 
-** Fora do escopo atual:**
+**Fora do escopo atual:**
 * Reserva online de medicamentos ou agendamento de retirada.
 * Prescrição médica, diagnóstico clínico ou recomendação terapêutica.
 * Integração direta com sistemas governamentais fechados (como Hórus ou e-SUS PEC) sem camada intermediária de exportação.
@@ -450,11 +450,3 @@ const CONFIG = {
   Não. A retirada no SUS é feita exclusivamente de forma presencial mediante apresentação da receita médica.
 * **E se o medicamento que eu preciso não aparecer na busca?**
   Verifique se o nome foi digitado corretamente pelo princípio ativo (nome genérico). Caso ainda não apareça, o fármaco pode não fazer parte da lista básica (REMUME/RENAME) dispensada pelas unidades cadastradas neste sistema.
-
----
-
-## 7. Ética, Viés Algorítmico e Responsabilidade Social
-
-A análise completa dos impactos éticos, mitigação de vieses linguísticos e regionais, prevenção de alucinações na saúde pública, acessibilidade digital e conformidade com a LGPD encontra-se documentada no arquivo dedicado:
-
-👉 **[Análise de Viés Algorítmico, Ética e Responsabilidade Social (`docs/ETICA_E_VIES.md`)](./ETICA_E_VIES.md)**
