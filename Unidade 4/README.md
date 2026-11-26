@@ -19,7 +19,7 @@ O sistema está hospedado na **Netlify** e pode ser acessado diretamente pelo na
 2. Digite o nome do medicamento desejado (ex.: *"Tem Losartana 50mg na Asa Sul?"* ou *"Onde encontrar Dipirona?"*).
 3. Confira as unidades com estoque disponível, o endereço completo e a lista de documentos necessários antes de se deslocar.
 
-##  Problema que Resolve
+##  Problema Identificado
 
 Cidadãos frequentemente se deslocam até unidades de saúde sem saber se o medicamento prescrito está disponível, gerando gastos desnecessários com transporte e sobrecarga no atendimento presencial. O **Chatbot SUS** permite que o paciente pergunte em linguagem natural onde encontrar seu remédio, conferindo saldo, endereço e documentos exigidos antes de sair de casa.
 
