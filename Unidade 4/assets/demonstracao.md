@@ -10,7 +10,7 @@ Registros dos cenários funcionais validados na interface conversacional, cobrin
 
 | Aviso LGPD e Desambiguação | Filtro por Bairro e Card da UBS |
 | :---: | :---: |
-| ![Protótipo Desambiguação](./assets/01-prototipo-desambiguacao.jpg) | ![Protótipo Resultado UBS](./assets/02-prototipo-resultado-ubs.jpg) |
+| ![Protótipo Desambiguação](./assets/prototipo-desambiguacao.jpg) | ![Protótipo Resultado UBS](./assets/02-prototipo-resultado-ubs.jpg) |
 | *Exibição do aviso de anonimato (LGPD) e seleção entre Comprimido ou Solução Oral.* | *Resultado detalhado para Dipirona Sódica 500mg na UBS 01 Asa Sul (300 unidades).* |
 
 | Consulta Direta com Receita Obrigatória | Orientação de Documentos para Retirada |
