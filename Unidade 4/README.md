@@ -71,9 +71,20 @@ Unidade 4/
 ├── README.md                  # Apresentação resumida e link de acesso online
 ├── index.html                 # Aplicação completa (HTML + CSS interno + JS/Agente + Adapter Supabase)
 │
-└── docs/
-    ├── DOCUMENTACAO.md        # Documentação técnica completa (Requisitos, Fluxograma, Agente e Ferramentas)
-    └── ETICA_E_VIES.md        # Análise de viés algorítmico e responsabilidade social
+├── docs/
+│   ├── DOCUMENTACAO.md        # Documentação técnica completa (Requisitos, Fluxograma, Agente e Ferramentas)
+│   ├── ETICA_E_VIES.md        # Análise de viés algorítmico e responsabilidade social
+│   ├── DEMONSTRACAO.md        # Registros visuais e fluxos validados da interface
+│   └── assets/                # Capturas de tela (.jpg) de funcionalidades do sistema
+│
+├── database/
+│   ├── BANCO_DE_DADOS.md      # Modelagem DER, dicionário de dados e regras de segurança (RLS)
+│   ├── schema.sql             # Script DDL de criação das tabelas e índices no Supabase
+│   └── seed.sql               # Script DML com dados iniciais de exemplo
+│
+└── tests/
+    ├── TESTES.md              # Plano de testes, matriz de validação e instruções de execução
+    └── chatbot.test.js        # Suíte de testes automatizados (regras funcionais e guardrails éticos)
 ```
 
 ##  Documentação Completa
