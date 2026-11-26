@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Medicamentos - SUS & Farmácia Popular</title>
+    <style>
+        :root {
+            --sus-azul: #004a8d;
+            --sus-verde: #008542;
+            --bg-chat: #eef2f6;
+            --msg-bot: #ffffff;
+            --msg-user: #004a8d;
+        }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, Arial, sans-serif; margin: 0; padding: 0; }
+        body { background: #dce3ec; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        
+        .chat-container {
+            width: 100%; max-width: 440px; height: 92vh; background: var(--bg-chat);
+            border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .chat-header {
+            background: linear-gradient(135deg, var(--sus-azul), var(--sus-verde));
+            color: white; padding: 16px 20px; display: flex; align-items: center; gap: 12px;
+        }
+        .chat-header .avatar {
+            width: 40px; height: 40px; background: white; color: var(--sus-azul);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 18px;
+        }
+        .chat-header h1 { font-size: 16px; font-weight: 600; }
+        .chat-header p { font-size: 12px; opacity: 0.9; }
+
+        .chat-messages {
+            flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+        }
+        .msg {
+            max-width: 85%; padding: 12px 14px; border-radius: 14px; font-size: 14px; line-height: 1.45;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        }
+        .msg.bot { background: var(--msg-bot); color: #222; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .msg.user { background: var(--msg-user); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        
+        .options-group { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+        .option-btn {
+            background: #f0f6ff; border: 1px solid #b6d4fe; color: var(--sus-azul);
+            padding: 8px 12px; border-radius: 8px; text-align: left; cursor: pointer;
+            font-size: 13px; font-weight: 500; transition: 0.2s;
+        }
+        .option-btn:hover { background: var(--sus-azul); color: white; }
+
+        .unit-card {
+            background: #f8fafc; border-left: 4px solid var(--sus-verde);
+            padding: 10px; border-radius: 6px; margin-top: 8px; font-size: 13px;
+        }
+        .unit-card.baixo { border-left-color: #d97706; }
+        .unit-card.indisponivel { border-left-color: #dc2626; opacity: 0.75; }
+        .badge {
+            display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 11px;
+            font-weight: bold; margin-bottom: 4px;
+        }
+        .badge.disp { background: #dcfce7; color: #166534; }
+        .badge.baixo { background: #fef3c7; color: #92400e; }
+        .badge.indisp { background: #fee2e2; color: #991b1b; }
+
+        .chat-input-area {
+            background: white; padding: 12px; display: flex; gap: 8px; border-top: 1px solid #ddd;
+        }
+        .chat-input-area input {
+            flex: 1; padding: 10px 14px; border: 1px solid #ccc; border-radius: 20px;
+            outline: none; font-size: 14px;
+        }
+        .chat-input-area button {
+            background: var(--sus-azul); color: white; border: none; padding: 0 18px;
+            border-radius: 20px; cursor: pointer; font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">
+        <div class="avatar">+</div>
+        <div>
+            <h1>Atendimento Medicamentos SUS</h1>
+            <p>Consulta de estoque UBS & Farmácia Popular</p>
+        </div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <form class="chat-input-area" id="chatForm">
+        <input type="text" id="userInput" placeholder="Digite aqui..." autocomplete="off" required>
+        <button type="submit">Enviar</button>
+    </form>
+</div>
+
+<script>
+    const SUPABASE_URL = 'https://qhwrmrrbedmbowoflqut.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_gkm_sUhdO_4CaHjsMASklQ_D70kZ25e';
+
+    // =========================================================================
+    // 1. MOTOR DE CONVERSAÇÃO (NLP LEVE + MÁQUINA DE ESTADOS)
+    // =========================================================================
+    const MotorConversacao = {
+        estado: 'INICIO', // INICIO | AGUARDANDO_DESAMBIGUACAO | AGUARDANDO_LOCAL
+        contexto: {
+            medicamentoSelecionado: null,
+            localPendente: null
+        },
+
+        // Remove acentos e deixa em minúsculo para facilitar comparação
+        normalizar(texto) {
+            return texto
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .trim();
+        },
+
+        // Identifica a intenção principal da frase do usuário
+        detectarIntencao(texto) {
+            const t = this.normalizar(texto);
+
+            if (/^(oi|ola|bom dia|boa tarde|boa noite|e ai|opa)\b/.test(t)) {
+                return 'SAUDACAO';
+            }
+            if (/\b(reiniciar|recomecar|cancelar|nova busca|inicio|voltar)\b/.test(t)) {
+                return 'REINICIAR';
+            }
+            if (/\b(documento|documentos|receita|cpf|cartao do sus|como funciona|retirar)\b/.test(t)) {
+                return 'DUVIDA_DOCUMENTOS';
+            }
+            if (/\b(lista|quais remedios|quais medicamentos|catalogo|disponiveis)\b/.test(t)) {
+                return 'LISTAR_CATALOGO';
+            }
+            return 'CONSULTAR_MEDICAMENTO';
+        },
+
+        // Extrai possível CEP ou bairro conhecido dentro de uma frase livre
+        extrairLocalizacao(texto) {
+            // 1. Procura padrão de CEP (ex: 70200-720 ou 70200720)
+            const matchCep = texto.match(/\b\d{5}-?\d{3}\b/);
+            if (matchCep) return matchCep[0];
+
+            // 2. Procura preposições de lugar ("na Asa Sul", "em Taguatinga", "bairro Centro")
+            const matchPreposicao = texto.match(/\b(?:na|no|em|bairro|regiao)\s+([a-zA-ZÀ-ÿ\s]{3,30})/i);
+            if (matchPreposicao) {
+                return matchPreposicao[1].replace(/[?.!]/g, '').trim();
+            }
+            return null;
+        },
+
+        // Limpa palavras comuns para isolar o nome do medicamento
+        extrairTermoMedicamento(texto, localExtraido) {
+            let limpo = texto;
+            if (localExtraido) {
+                limpo = limpo.replace(new RegExp(localExtraido, 'gi'), '');
+            }
+            // Remove palavras de intenção/ligação
+            limpo = limpo
+                .replace(/\b(ola|oi|gostaria|saber|se|tem|voces|tem|preciso|de|do|da|um|uma|remedio|medicamento|para|na|no|em|bairro|cep|por favor|qual|onde|encontro)\b/gi, ' ')
+                .replace(/[?.!,]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+            return limpo;
+        }
+    };
+
+    // =========================================================================
+    // 2. CAMADA DE DADOS (ADAPTER SUPABASE)
+    // =========================================================================
+    const SupabaseAdapter = {
+        headers() {
+            return {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+            };
+        },
+
+        async listarTodosMedicamentos() {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/medicamentos?select=principio_ativo,concentracao,forma_farmaceutica,programa`, {
+                headers: this.headers()
+            });
+            return await res.json();
+        },
+
+        async buscarMedicamentos(termo) {
+            const q = encodeURIComponent(`%${termo}%`);
+            const url = `${SUPABASE_URL}/rest/v1/medicamentos?or=(principio_ativo.ilike.${q},nome_comercial_referencia.ilike.${q})&select=*`;
+            const res = await fetch(url, { headers: this.headers() });
+            return await res.json();
+        },
+
+        async consultarEstoque(medicamentoId, localizacao) {
+            const url = `${SUPABASE_URL}/rest/v1/estoque?medicamento_id=eq.${medicamentoId}&select=quantidade_disponivel,status_estoque,unidades_saude(*)`;
+            const res = await fetch(url, { headers: this.headers() });
+            const dados = await res.json();
+
+            const termoLocal = MotorConversacao.normalizar(localizacao || '').replace('-', '');
+            return dados.filter(item => {
+                if (!item.unidades_saude || !item.unidades_saude.ativo) return false;
+                if (!termoLocal || termoLocal === 'todos') return true;
+                const bairro = MotorConversacao.normalizar(item.unidades_saude.bairro);
+                const cep = item.unidades_saude.cep.replace('-', '');
+                return bairro.includes(termoLocal) || cep.includes(termoLocal);
+            });
+        }
+    };
+
+    // =========================================================================
+    // 3. ORQUESTRADOR DO DIÁLOGO E INTERFACE
+    // =========================================================================
+    const chatMessages = document.getElementById('chatMessages');
+    const chatForm = document.getElementById('chatForm');
+    const userInput = document.getElementById('userInput');
+
+    function adicionarMensagem(html, remetente = 'bot') {
+        const div = document.createElement('div');
+        div.className = `msg ${remetente}`;
+        div.innerHTML = html;
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        return div;
+    }
+
+    function iniciarConversa() {
+        MotorConversacao.estado = 'INICIO';
+        MotorConversacao.contexto = { medicamentoSelecionado: null, localPendente: null };
+        adicionarMensagem(
+            `Olá! Sou o assistente de consulta de medicamentos do <b>SUS e Farmácia Popular</b>.<br><br>` +
+            `<small>🔒 <i>Aviso LGPD: Esta consulta é anônima e não armazena dados pessoais.</i></small><br><br>` +
+            `Você pode perguntar diretamente, por exemplo:<br>` +
+            `• <i>"Tem Losartana na Asa Sul?"</i><br>` +
+            `• <i>"Quais medicamentos estão cadastrados?"</i><br>` +
+            `• <i>"Quais documentos preciso levar?"</i>`
+        );
+    }
+
+    async function exibirEstoqueFinal(med, local) {
+        const resultados = await SupabaseAdapter.consultarEstoque(med.id, local);
+
+        if (resultados.length === 0) {
+            adicionarMensagem(
+                `Não encontrei unidades cadastradas para <b>${med.principio_ativo}</b> na região "<b>${local}</b>".<br>` +
+                `Digite outro bairro/CEP ou escreva <b>Todos</b> para ver todas as unidades.`
+            );
+            MotorConversacao.estado = 'AGUARDANDO_LOCAL';
+            return;
+        }
+
+        let html = `Estoque para <b>${med.principio_ativo} ${med.concentracao}</b>:<br>`;
+        html += `<small>📋 Receita médica: <b>${med.exige_receita ? 'Obrigatória' : 'Não exigida'}</b></small>`;
+
+        resultados.forEach(item => {
+            const u = item.unidades_saude;
+            const statusMap = {
+                'DISPONIVEL': { cls: '', badge: 'disp', txt: `Disponível (${item.quantidade_disponivel} unid.)` },
+                'BAIXO_ESTOQUE': { cls: 'baixo', badge: 'baixo', txt: `Baixo Estoque (${item.quantidade_disponivel} unid.)` },
+                'INDISPONIVEL': { cls: 'indisponivel', badge: 'indisp', txt: 'Indisponível no momento' }
+            };
+            const st = statusMap[item.status_estoque] || statusMap['INDISPONIVEL'];
+
+            html += `
+                <div class="unit-card ${st.cls}">
+                    <span class="badge ${st.badge}">${st.txt}</span><br>
+                    <b>${u.nome}</b> (${u.tipo === 'UBS' ? 'UBS' : 'Farmácia Popular'})<br>
+                    📍 ${u.endereco} - ${u.bairro} (CEP: ${u.cep})<br>
+                    🕒 ${u.horario_funcionamento}
+                </div>
+            `;
+        });
+
+        html += `<br><small>Posso ajudar com outro medicamento ou dúvida?</small>`;
+        adicionarMensagem(html);
+        MotorConversacao.estado = 'INICIO';
+        MotorConversacao.contexto = { medicamentoSelecionado: null, localPendente: null };
+    }
+
+    async function selecionarOpcaoMedicamento(med) {
+        MotorConversacao.contexto.medicamentoSelecionado = med;
+        adicionarMensagem(`${med.principio_ativo} ${med.concentracao} (${med.forma_farmaceutica})`, 'user');
+
+        // Se o usuário já tinha informado o bairro na primeira frase, vai direto para o resultado!
+        if (MotorConversacao.contexto.localPendente) {
+            await exibirEstoqueFinal(med, MotorConversacao.contexto.localPendente);
+        } else {
+            MotorConversacao.estado = 'AGUARDANDO_LOCAL';
+            adicionarMensagem(`Qual <b>bairro</b> ou <b>CEP</b> você deseja consultar? (Ex: <i>Asa Sul</i>, <i>Taguatinga</i> ou <i>Todos</i>)`);
+        }
+    }
+
+    chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const texto = userInput.value.trim();
+        if (!texto) return;
+
+        adicionarMensagem(texto, 'user');
+        userInput.value = '';
+
+        try {
+            const intencao = MotorConversacao.detectarIntencao(texto);
+
+            // Intenções globais (funcionam em qualquer momento da conversa)
+            if (intencao === 'REINICIAR') {
+                iniciarConversa();
+                return;
+            }
+            if (intencao === 'SAUDACAO' && MotorConversacao.estado === 'INICIO') {
+                adicionarMensagem(`Olá! Qual medicamento do SUS ou Farmácia Popular você gostaria de consultar hoje?`);
+                return;
+            }
+            if (intencao === 'DUVIDA_DOCUMENTOS') {
+                adicionarMensagem(
+                    `📄 <b>Documentos necessários para retirada:</b><br><br>` +
+                    `• <b>Na UBS (SUS Básico):</b> Documento oficial com foto, Cartão Nacional de Saúde (Cartão do SUS) ou CPF, e receita médica válida.<br>` +
+                    `• <b>Na Farmácia Popular:</b> Documento oficial com foto, CPF e receita médica dentro do prazo de validade (180 dias para uso contínuo).<br><br>` +
+                    `Deseja consultar algum medicamento agora?`
+                );
+                return;
+            }
+            if (intencao === 'LISTAR_CATALOGO') {
+                const lista = await SupabaseAdapter.listarTodosMedicamentos();
+                const itens = lista.map(m => `• <b>${m.principio_ativo}</b> (${m.concentracao} - ${m.forma_farmaceutica})`).join('<br>');
+                adicionarMensagem(`📋 <b>Medicamentos cadastrados no sistema:</b><br><br>${itens}<br><br>Digite o nome de um deles para verificar o estoque.`);
+                return;
+            }
+
+            // Fluxo de consulta por estado
+            if (MotorConversacao.estado === 'AGUARDANDO_LOCAL') {
+                await exibirEstoqueFinal(MotorConversacao.contexto.medicamentoSelecionado, texto);
+                return;
+            }
+
+            // Estado INICIO: extrai medicamento e eventual localização na mesma frase
+            const localExtraido = MotorConversacao.extrairLocalizacao(texto);
+            const termoMed = MotorConversacao.extrairTermoMedicamento(texto, localExtraido);
+
+            if (!termoMed || termoMed.length < 3) {
+                adicionarMensagem(`Não entendi qual medicamento você procura. Tente digitar o nome do remédio (ex: <i>Losartana</i> ou <i>Dipirona</i>).`);
+                return;
+            }
+
+            const meds = await SupabaseAdapter.buscarMedicamentos(termoMed);
+
+            if (!meds || meds.length === 0) {
+                adicionarMensagem(`Não encontrei "<b>${termoMed}</b>" na base do SUS/Farmácia Popular. Digite <b>lista</b> para ver os medicamentos disponíveis.`);
+                return;
+            }
+
+            if (meds.length === 1) {
+                MotorConversacao.contexto.medicamentoSelecionado = meds[0];
+                if (localExtraido) {
+                    await exibirEstoqueFinal(meds[0], localExtraido);
+                } else {
+                    MotorConversacao.estado = 'AGUARDANDO_LOCAL';
+                    adicionarMensagem(
+                        `Encontrei <b>${meds[0].principio_ativo} ${meds[0].concentracao}</b> (${meds[0].forma_farmaceutica}).<br>` +
+                        `Em qual <b>bairro</b> ou <b>CEP</b> deseja buscar? (Ou digite <i>Todos</i>)`
+                    );
+                }
+            } else {
+                // Desambiguação preservando a localização se o usuário já informou
+                MotorConversacao.estado = 'AGUARDANDO_DESAMBIGUACAO';
+                MotorConversacao.contexto.localPendente = localExtraido;
+
+                const msgBot = adicionarMensagem(`Encontrei mais de uma opção para "<b>${termoMed}</b>". Selecione qual você precisa:`);
+                const btnGroup = document.createElement('div');
+                btnGroup.className = 'options-group';
+
+                meds.forEach(med => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.textContent = `${med.principio_ativo} - ${med.concentracao} (${med.forma_farmaceutica})`;
+                    btn.onclick = () => selecionarOpcaoMedicamento(med);
+                    btnGroup.appendChild(btn);
+                });
+                msgBot.appendChild(btnGroup);
+            }
+        } catch (erro) {
+            console.error(erro);
+            adicionarMensagem(`⚠️ Erro ao processar sua solicitação. Verifique a conexão com o Supabase no console (F12).`);
+        }
+    });
+
+    iniciarConversa();
+</script>
+
+</body>
+</html>
