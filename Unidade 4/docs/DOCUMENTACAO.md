@@ -39,7 +39,8 @@
   - [6.1 Manual do Cidadão](#61-manual-do-cidadão)
   - [6.2 Manual do Operador / Suporte](#62-manual-do-operador--suporte)
   - [6.3 Perguntas Frequentes (FAQ)](#63-perguntas-frequentes-faq)
-
+- [7. Documentação Complementar do Repositório](#7-documentação-complementar-do-repositório)]
+- [8.Referências Bibliográficas](#8-referências-bibliográficas)]
 ---
 
 ## 1. Visão Geral e Escopo
@@ -211,6 +212,7 @@ flowchart LR
 ### 3.2 Especificação do Agente de IA (Papéis e Instruções)
 
 O agente conversacional foi projetado como um **Agente Especialista em Orientação Farmacêutica Pública (SUS)**, operando sob arquitetura de aterramento (*Grounding*) em dados reais para impedir respostas inventadas.
+ **Modelagem e Scripts SQL:** O diagrama entidade-relacionamento (DER), o dicionário de dados completo e os scripts reproduzíveis estão disponíveis em [`database/BANCO_DE_DADOS.md`](../database/BANCO_DE_DADOS.md), [`database/schema.sql`](../database/schema.sql) e [`database/seed.sql`](../database/seed.sql).
 
 #### Papéis do Agente
 1. **Intérprete Semântico (NLU):** Identifica a intenção da mensagem do cidadão (consulta de disponibilidade, dúvida sobre documentos exigidos, saudação ou solicitação fora de escopo) e normaliza nomes comerciais, genéricos ou erros ortográficos leves de medicamentos e localidades.
@@ -450,3 +452,21 @@ const CONFIG = {
   Não. A retirada no SUS é feita exclusivamente de forma presencial mediante apresentação da receita médica.
 * **E se o medicamento que eu preciso não aparecer na busca?**
   Verifique se o nome foi digitado corretamente pelo princípio ativo (nome genérico). Caso ainda não apareça, o fármaco pode não fazer parte da lista básica (REMUME/RENAME) dispensada pelas unidades cadastradas neste sistema.
+
+## 7. Documentação Complementar do Repositório
+
+* **Demonstração Visual da Interface:** [`docs/DEMONSTRACAO.md`](./DEMONSTRACAO.md)
+* **Análise de Ética, Privacidade e Viés:** [`docs/ETICA_E_VIES.md`](./ETICA_E_VIES.md)
+* **Modelagem e Scripts do Banco de Dados:** [`database/BANCO_DE_DADOS.md`](../database/BANCO_DE_DADOS.md)
+* **Plano e Suíte de Testes Automatizados:** [`tests/TESTES.md`](../tests/TESTES.md) (`node tests/chatbot.test.js`)
+
+## 8. Referências Bibliográficas
+
+* BRASIL. **Lei nº 13.709, de 14 de agosto de 2018**. Lei Geral de Proteção de Dados Pessoais (LGPD). Brasília, DF: Presidência da República, 2018. Disponível em: https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm. Acesso em: 25 nov. 2026.
+* BRASIL. Ministério da Saúde. **Relação Nacional de Medicamentos Essenciais (RENAME)**. Brasília, DF: Ministério da Saúde, 2024. Disponível em: https://www.gov.br/saude/pt-br/composicao/sectics/rename. Acesso em: 25 nov. 2026.
+* BRASIL. Ministério da Saúde. **Programa Farmácia Popular do Brasil: Manual de Orientações às Farmácias e Drogarias Credenciadas**. Brasília, DF: Secretaria de Ciência, Tecnologia, Inovação e Complexo da Saúde, 2024. Disponível em: https://www.gov.br/saude/pt-br/composicao/sectics/farmacia-popular. Acesso em: 25 nov. 2026.
+* CONSELHO FEDERAL DE FARMÁCIA (CFF). **Resolução nº 585, de 29 de agosto de 2013**. Regulamenta as atribuições clínicas do farmacêutico e dispõe sobre o uso racional de medicamentos. Brasília, DF: CFF, 2013.
+* JURAFSKY, Daniel; MARTIN, James H. **Speech and Language Processing**: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition. 3. ed. Stanford: Stanford University, 2024.
+* POSTGRESQL GLOBAL DEVELOPMENT GROUP. **PostgreSQL Documentation: Row Security Policies**. 2026. Disponível em: https://www.postgresql.org/docs/current/ddl-rowsecurity.html. Acesso em: 25 nov. 2026.
+* RUSSELL, Stuart; NORVIG, Peter. **Inteligência Artificial**: Uma Abordagem Moderna. 4. ed. Rio de Janeiro: GEN LTC, 2022.
+* SUPABASE INC. **Supabase Documentation: Database, PostgREST API & Row Level Security**. 2026. Disponível em: https://supabase.com/docs. Acesso em: 25 nov. 2026.
