@@ -1,21 +1,10 @@
 #  Demonstração Visual e Evolução da Interface
 
-Este documento apresenta os registros visuais do **Chatbot SUS**, evidenciando a evolução desde o protótipo inicial com fluxos guiados até a integração final com o **Agente de IA** e o banco de dados **Supabase**, incluindo cenários de consulta bem-sucedida, orientação documental e tratamento de indisponibilidade.
+Este documento apresenta os registros visuais do **Chatbot SUS**, incluindo cenários de consulta bem-sucedida, orientação documental e tratamento de indisponibilidade.
 
 ---
 
-## 1. Versão Atual: Agente Inteligente + Supabase
-
-Na versão atual em produção, o usuário pode digitar livremente (ex.: *"dipirona asa sul"*). O agente identifica simultaneamente o fármaco e a região, consulta o PostgreSQL via API REST e formula uma resposta humanizada alertando inclusive sobre apresentações sem estoque.
-
-| Interpretação de Linguagem Natural | Resposta Estruturada e Detalhada |
-| :---: | :---: |
-| ![Agente Inteligente Início](./assets/05-agente-ia-inicio.jpg) | ![Agente Inteligente Resposta](./assets/06-agente-ia-resposta-completa.jpg) |
-| *Extração de entidades ("dipirona" + "asa sul") e identificação das apresentações cadastradas no SUS.* | *Retorno com status, endereço da UBS 01 Asa Sul, horário, exigência de receita e aviso de falta da versão em gotas.* |
-
----
-
-## 2. Fluxos Guiados, Documentação e Tratamento de Falta
+## 1. Fluxos Guiados, Documentação e Tratamento de Falta
 
 Registros dos cenários funcionais validados na interface conversacional, cobrindo desambiguação de medicamentos, exigência de receita médica, dúvidas sobre documentos e tratamento quando não há estoque na região solicitada:
 
