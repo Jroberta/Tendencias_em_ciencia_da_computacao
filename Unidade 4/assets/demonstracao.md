@@ -15,10 +15,10 @@ Registros dos cenários funcionais validados na interface conversacional, cobrin
 
 | Consulta Direta com Receita Obrigatória | Orientação de Documentos para Retirada |
 | :---: | :---: |
-| ![Consulta Direta Losartana](./03-consulta-direta-losartana.jpg) | ![Orientação de Documentos](./04-orientacao-documentos.jpg) |
+| ![Consulta Direta Losartana](./consulta-direta-losartana.jpg) | ![Orientação de Documentos](./orientacao-de-documentos.jpg) |
 | *Busca por Losartana Potássica 50mg na Asa Sul destacando a obrigatoriedade de receita médica.* | *Assistente informando a documentação exigida na UBS (SUS Básico) e na Farmácia Popular.* |
 
 | Tratamento de Indisponibilidade Regional (RF05) |
 | :---: |
-| ![Tratamento de Indisponibilidade](./07-tratamento-indisponibilidade.jpg) |
+| ![Tratamento de Indisponibilidade](./tratamento-de-indisponibilidade.jpg) |
 | *Busca por Amoxicilina 500mg na Asa Norte sem unidades disponíveis no momento, orientando busca em outro bairro ou com a opção "Todos".* |
