@@ -10,15 +10,15 @@ Registros dos cenários funcionais validados na interface conversacional, cobrin
 
 | Aviso LGPD e Desambiguação | Filtro por Bairro e Card da UBS |
 | :---: | :---: |
-| ![Protótipo Desambiguação](./prototipo-desambiguacao.jpg) | ![Protótipo Resultado UBS](./assets/prototipo-resultado-ubs.jpg) |
+| ![Protótipo Desambiguação](./prototipo-desambiguacao.jpg) | ![Protótipo Resultado UBS](./prototipo-resultado-ubs.jpg) |
 | *Exibição do aviso de anonimato (LGPD) e seleção entre Comprimido ou Solução Oral.* | *Resultado detalhado para Dipirona Sódica 500mg na UBS 01 Asa Sul (300 unidades).* |
 
 | Consulta Direta com Receita Obrigatória | Orientação de Documentos para Retirada |
 | :---: | :---: |
-| ![Consulta Direta Losartana](./assets/03-consulta-direta-losartana.jpg) | ![Orientação de Documentos](./assets/04-orientacao-documentos.jpg) |
+| ![Consulta Direta Losartana](./03-consulta-direta-losartana.jpg) | ![Orientação de Documentos](./04-orientacao-documentos.jpg) |
 | *Busca por Losartana Potássica 50mg na Asa Sul destacando a obrigatoriedade de receita médica.* | *Assistente informando a documentação exigida na UBS (SUS Básico) e na Farmácia Popular.* |
 
 | Tratamento de Indisponibilidade Regional (RF05) |
 | :---: |
-| ![Tratamento de Indisponibilidade](./assets/07-tratamento-indisponibilidade.jpg) |
+| ![Tratamento de Indisponibilidade](./07-tratamento-indisponibilidade.jpg) |
 | *Busca por Amoxicilina 500mg na Asa Norte sem unidades disponíveis no momento, orientando busca em outro bairro ou com a opção "Todos".* |
