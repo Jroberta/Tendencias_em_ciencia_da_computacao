@@ -39,8 +39,8 @@
   - [6.1 Manual do Cidadão](#61-manual-do-cidadão)
   - [6.2 Manual do Operador / Suporte](#62-manual-do-operador--suporte)
   - [6.3 Perguntas Frequentes (FAQ)](#63-perguntas-frequentes-faq)
-- [7. Documentação Complementar do Repositório](#7-documentação-complementar-do-repositório)]
-- [8.Referências Bibliográficas](#8-referências-bibliográficas)]
+- [7. Documentação Complementar do Repositório](#7-documentação-complementar-do-repositório)
+- [8.Referências Bibliográficas](#8-referências-bibliográficas)
 ---
 
 ## 1. Visão Geral e Escopo
